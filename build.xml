@@ -103,7 +103,7 @@
 
             <fileset dir="${dir.src}">
                 <include name="**/*.php" />
-		        <exclude name="${exclude.dir.vendor}" />
+		<exclude name="${exclude.dir.vendor}" />
                 <exclude name="${exclude.dir.thinkphp}" />
                 <exclude name="${exclude.dir.public}" />
                 <exclude name="${exclude.dir.ecookie}" />
@@ -141,7 +141,7 @@
             <arg path="${project.basedir}/build/logs/phploc.xml" />
             <arg path="${dir.src}" />
             <arg path="${dir.tests}" />
-	        <arg value="--exclude" />
+	    <arg value="--exclude" />
             <arg value="${exclude.dir.vendor}" />
             <arg value="--exclude" />
             <arg value="${exclude.dir.thinkphp}" />
@@ -162,8 +162,8 @@
             <arg value="--jdepend-xml=${project.basedir}/build/logs/jdepend.xml" />
             <arg value="--jdepend-chart=${project.basedir}/build/pdepend/dependencies.svg" />
             <arg value="--overview-pyramid=${project.basedir}/build/pdepend/overview-pyramid.svg" />
-	        <arg value="--ignore=${exclude.dir.vendor},${exclude.dir.thinkphp},${exclude.dir.public},${exclude.dir.ecookie}" />
-	        <arg path="${dir.src}" />
+	    <arg value="--ignore=${exclude.dir.vendor},${exclude.dir.thinkphp},${exclude.dir.public},${exclude.dir.ecookie}" />
+	    <arg path="${dir.src}" />
         </exec>
 
         <property name="pdepend.done" value="true"/>
@@ -176,7 +176,7 @@
             <arg path="${dir.src}" />
             <arg value="text" />
             <arg path="${project.basedir}/build/phpmd.xml" />
-	        <arg value="--exclude ${exclude.dir.vendor}" />
+	    <arg value="--exclude ${exclude.dir.vendor}" />
             <arg value="--exclude ${exclude.dir.thinkphp}" />
             <arg value="--exclude ${exclude.dir.public}" />
             <arg value="--exclude ${exclude.dir.ecookie}" />
@@ -206,7 +206,7 @@
         <exec executable="${phpcs}" taskname="phpcs">
             <arg value="--standard=PSR2" />
             <arg value="--extensions=php" />
-	        <arg value="--ignore=${exclude.dir.vendor},${exclude.dir.thinkphp},${exclude.dir.public},${exclude.dir.ecookie}" />
+	    <arg value="--ignore=${exclude.dir.vendor},${exclude.dir.thinkphp},${exclude.dir.public},${exclude.dir.ecookie}" />
             <arg path="${dir.src}" />
             <arg path="${dir.tests}" />
         </exec>
@@ -236,7 +236,7 @@
          description="Find duplicate code using PHPCPD and print human readable output. Intended for usage on the command line before committing.">
         <exec executable="${phpcpd}" taskname="phpcpd">
             <arg path="${dir.src}" />
-	        <arg value="--exclude ${exclude.dir.vendor}" />
+	    <arg value="--exclude ${exclude.dir.vendor}" />
             <arg value="--exclude ${exclude.dir.thinkphp}" />
             <arg value="--exclude ${exclude.dir.public}" />
             <arg value="--exclude ${exclude.dir.ecookie}" />
