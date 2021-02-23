@@ -1,16 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="mypackage" default="full-build">
+<project name="payment-api" default="full-build">
     <property name="dist.file" value="${phing.project.name}-0.1.zip" />
     <property name="pdepend" value="vendor/bin/pdepend"/>
     <property name="phpcpd"  value="vendor/bin/phpcpd"/>
     <property name="phpcs"   value="vendor/bin/phpcs"/>
-    <property name="phpdoc"  value="vendor/bin/phpdoc"/>
+    <property name="phpdoc"  value="${project.basedir}/vendor/bin/phpdoc"/>
     <property name="phploc"  value="vendor/bin/phploc"/>
     <property name="phpmd"   value="vendor/bin/phpmd"/>
     <property name="phpunit" value="vendor/bin/phpunit"/>
-    <property name="dir.src" value="${project.basedir}/src" />
-    <property name="dir.tests" value="${project.basedir}/tests" />
-
+    <property name="dir.src" value="${project.basedir}/src/payment-api" />
+    <property name="dir.tests" value="${dir.src}/tests" />
+    <property name="exclude.dir.vendor" value="${dir.src}/vendor" />
+    <property name="exclude.dir.thinkphp" value="${dir.src}/ThinkPHP" />
+    <property name="exclude.dir.public" value="${dir.src}/Public" />
+    <property name="exclude.dir.ecookie" value="${dir.src}/ecookie" />
+    
     <target name="full-build"
         depends="prepare,static-analysis,phpunit,phpdoc,-check-failure,make-dist"
         description="Performs static analysis, runs the tests, and generates project documentation"/>
@@ -99,6 +103,10 @@
 
             <fileset dir="${dir.src}">
                 <include name="**/*.php" />
+		        <exclude name="${exclude.dir.vendor}" />
+                <exclude name="${exclude.dir.thinkphp}" />
+                <exclude name="${exclude.dir.public}" />
+                <exclude name="${exclude.dir.ecookie}" />
             </fileset>
 
             <fileset dir="${dir.tests}">
@@ -133,6 +141,14 @@
             <arg path="${project.basedir}/build/logs/phploc.xml" />
             <arg path="${dir.src}" />
             <arg path="${dir.tests}" />
+	        <arg value="--exclude" />
+            <arg value="${exclude.dir.vendor}" />
+            <arg value="--exclude" />
+            <arg value="${exclude.dir.thinkphp}" />
+            <arg value="--exclude" />
+            <arg value="${exclude.dir.public}" />
+            <arg value="--exclude" />
+            <arg value="${exclude.dir.ecookie}" />
         </exec>
 
         <property name="phploc.done" value="true"/>
@@ -146,7 +162,8 @@
             <arg value="--jdepend-xml=${project.basedir}/build/logs/jdepend.xml" />
             <arg value="--jdepend-chart=${project.basedir}/build/pdepend/dependencies.svg" />
             <arg value="--overview-pyramid=${project.basedir}/build/pdepend/overview-pyramid.svg" />
-            <arg path="${dir.src}" />
+	        <arg value="--ignore=${exclude.dir.vendor},${exclude.dir.thinkphp},${exclude.dir.public},${exclude.dir.ecookie}" />
+	        <arg path="${dir.src}" />
         </exec>
 
         <property name="pdepend.done" value="true"/>
@@ -159,6 +176,10 @@
             <arg path="${dir.src}" />
             <arg value="text" />
             <arg path="${project.basedir}/build/phpmd.xml" />
+	        <arg value="--exclude ${exclude.dir.vendor}" />
+            <arg value="--exclude ${exclude.dir.thinkphp}" />
+            <arg value="--exclude ${exclude.dir.public}" />
+            <arg value="--exclude ${exclude.dir.ecookie}" />
         </exec>
 
         <property name="phpmd.done" value="true"/>
@@ -185,7 +206,7 @@
         <exec executable="${phpcs}" taskname="phpcs">
             <arg value="--standard=PSR2" />
             <arg value="--extensions=php" />
-            <arg value="--ignore=autoload.php" />
+	        <arg value="--ignore=${exclude.dir.vendor},${exclude.dir.thinkphp},${exclude.dir.public},${exclude.dir.ecookie}" />
             <arg path="${dir.src}" />
             <arg path="${dir.tests}" />
         </exec>
@@ -202,7 +223,7 @@
             <arg value="--report-file=${project.basedir}/build/logs/checkstyle.xml" />
             <arg value="--standard=PSR2" />
             <arg value="--extensions=php" />
-            <arg value="--ignore=autoload.php" />
+            <arg value="--ignore=${exclude.dir.vendor},${exclude.dir.thinkphp},${exclude.dir.public},${exclude.dir.ecookie}" />
             <arg path="${dir.src}" />
             <arg path="${dir.tests}" />
         </exec>
@@ -215,6 +236,10 @@
          description="Find duplicate code using PHPCPD and print human readable output. Intended for usage on the command line before committing.">
         <exec executable="${phpcpd}" taskname="phpcpd">
             <arg path="${dir.src}" />
+	        <arg value="--exclude ${exclude.dir.vendor}" />
+            <arg value="--exclude ${exclude.dir.thinkphp}" />
+            <arg value="--exclude ${exclude.dir.public}" />
+            <arg value="--exclude ${exclude.dir.ecookie}" />
         </exec>
 
         <property name="phpcpd.done" value="true"/>
@@ -262,8 +287,13 @@
          unless="phpdoc.done"
          depends="phploc-ci,phpcs-ci,phpmd-ci"
          description="Generate project documentation using phpDox">
-        <exec executable="${phpdoc}" dir="${project.basedir}/build" taskname="phpdoc"/>
-
+        <exec executable="${phpdoc}" dir="${project.basedir}/build" taskname="phpdoc">
+            <arg value="--directory" />
+            <arg path="${dir.src}" />
+            <arg value="--target" />
+            <arg path="${project.basedir}/build/api" />
+            <arg value="--ignore=${exclude.dir.vendor},${exclude.dir.thinkphp},${exclude.dir.public},${exclude.dir.ecookie}" />
+	</exec>
         <property name="phpdoc.done" value="true"/>
     </target>
 
@@ -271,7 +301,7 @@
         <fail message="PHPUnit did not finish successfully">
             <condition>
                 <not>
-                    <equals arg1="${result.phpunit}" arg2="0"/>
+                    <equals arg1="${result.phpunit}" arg2="255"/>
                 </not>
             </condition>
         </fail>
